@@ -1,0 +1,20 @@
+{
+  "Lua.runtime.version": "Lua 5.2",
+  "Lua.diagnostics.globals": [
+    "script",
+    "game",
+    "defines",
+    "data",
+    "settings",
+    "storage",
+    "remote",
+    "rendering",
+    "util",
+    "mods",
+    "prototypes",
+    "commands",
+    "log",
+    "serpent"
+  ],
+  "Lua.workspace.checkThirdParty": false
+}
