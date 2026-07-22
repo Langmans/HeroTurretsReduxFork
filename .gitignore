@@ -12,6 +12,7 @@ Thumbs.db
 *.log
 *.tmp
 *.bak
+.tmp/
 
 # Packaged mod artifacts
 *.zip

@@ -16,5 +16,8 @@
     "log",
     "serpent"
   ],
-  "Lua.workspace.checkThirdParty": false
+  "Lua.workspace.checkThirdParty": "ApplyInMemory",
+  "Lua.workspace.userThirdParty": [
+    ".tmp/lua-third-party"
+  ]
 }
