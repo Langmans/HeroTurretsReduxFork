@@ -27,3 +27,6 @@
 .vscode export-ignore
 scripts export-ignore
 readme.md export-ignore
+.tmp export-ignore
+.tmp/** export-ignore
+.luarc.json export-ignore

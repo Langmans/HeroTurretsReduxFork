@@ -27,7 +27,7 @@ try {
 
     Get-ChildItem -Path $ModRoot -Force |
         Where-Object {
-            $_.Name -notin @('.git', '.github', '.vscode', 'scripts', '.gitignore', '.gitattributes')
+            -not $_.Name.StartsWith('.') -and $_.Name -notin @('scripts', 'readme.md')
         } |
         Copy-Item -Destination $stageDir -Recurse -Force
 

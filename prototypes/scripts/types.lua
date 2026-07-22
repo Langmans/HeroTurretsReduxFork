@@ -1011,22 +1011,18 @@ local local_create_turret = function(turret,rank,rank_string,mod,custom_buff_mod
         end
 
 		if entity_name == item.place_result then
-			if turret.entity.fast_replaceable_group == nil then
-				turret.entity.fast_replaceable_group = turret.entity.name
-				entity.fast_replaceable_group = turret.entity.name
-				if settings.startup["heroturrets-allow-artillery-turrets"].value == false and turret.entity.type == "artillery-turret" then
+            local replace_group = turret.entity.fast_replaceable_group
+            if replace_group == nil then
+                replace_group = turret.entity.name
+                turret.entity.fast_replaceable_group = replace_group
+            end
+            entity.fast_replaceable_group = replace_group
 
-				else
-					-- Commented out to prevent ranked turrets from appearing in ghost cursor selection
-					-- if turret.entity.next_upgrade == nil then turret.entity.next_upgrade = entity_name end
-				end
-			else
-				if settings.startup["heroturrets-allow-artillery-turrets"].value == false and turret.entity.type == "artillery-turret" then
-				else
-					-- Commented out to prevent ranked turrets from appearing in ghost cursor selection
-					-- if turret.entity.next_upgrade == nil then turret.entity.next_upgrade = entity_name end
-				end
-			end
+            if settings.startup["heroturrets-allow-artillery-turrets"].value == false and turret.entity.type == "artillery-turret" then
+            else
+                -- Commented out to prevent ranked turrets from appearing in ghost cursor selection
+                -- if turret.entity.next_upgrade == nil then turret.entity.next_upgrade = entity_name end
+            end
 		else
 			turret.entity.next_upgrade = nil
 			log("mismatched entity and item place result, no next upgrade: "..entity_name)
