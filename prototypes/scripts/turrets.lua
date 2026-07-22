@@ -44,6 +44,22 @@ local customDamageTable = settings.startup["heroturrets-csv-damage"].value
 
 local maxHealthOnRankUp = settings.startup["heroturrets-max-health-on-rank"].value
 
+local report_ammo_copy_issue = function(entity, ammo_stack, details)
+	log("HeroTurrets ammo transfer warning: " .. details)
+	if game == nil then return end
+	local msg = "[HeroTurretsReduxFork] Ammo transfer warning during rank-up on " .. (entity and entity.name or "unknown turret") .. ": " .. details
+	if storage ~= nil and storage.heroturrets ~= nil then
+		local state = storage.heroturrets
+		if state.ammo_copy_warn_tick == nil or (game.tick - state.ammo_copy_warn_tick) > 600 then
+			game.print(msg)
+			state.ammo_copy_warn_tick = game.tick
+		end
+		state.ammo_copy_warn_count = (state.ammo_copy_warn_count or 0) + 1
+	else
+		game.print(msg)
+	end
+end
+
 --- Build out priority target list for turrets that support it
 ---@param entity LuaEntity
 local build_priority_targets = function(entity)
@@ -190,9 +206,21 @@ local local_replace_turret = function(entity,recipe)
 	  end
 	end
 	local i = entity.get_inventory(defines.inventory.turret_ammo)
-	local c = nil
+	local ammo_stacks = nil
 	if i ~= nil then 
-		c = i.get_contents()		
+		ammo_stacks = {}
+		for slot_index = 1, #i do
+			local stack = i[slot_index]
+			if stack ~= nil and stack.valid_for_read then
+				table.insert(ammo_stacks, {
+					name = stack.name,
+					count = stack.count,
+					quality = stack.quality,
+					ammo = stack.ammo,
+					health = stack.health
+				})
+			end
+		end
 	end
 	if  entity.can_be_destroyed() ~= true or 
 		entity.destroy({raise_destroy = true}) ~= true then return end
@@ -208,9 +236,21 @@ local local_replace_turret = function(entity,recipe)
 	new_entity.damage_dealt = dd
 
 	local inv = new_entity.get_inventory(defines.inventory.turret_ammo)
-	if inv ~= nil and c ~= nil then
-		for index, inv_typetable in pairs(c) do
-			inv.insert{name=inv_typetable.name,count=inv_typetable.count,quality = inv_typetable.quality}
+	if inv ~= nil and ammo_stacks ~= nil then
+		for _, ammo_stack in ipairs(ammo_stacks) do
+			local insert_data = {
+				name = ammo_stack.name,
+				count = ammo_stack.count,
+				quality = ammo_stack.quality,
+				ammo = ammo_stack.ammo,
+				health = ammo_stack.health
+			}
+			local ok, inserted = pcall(inv.insert, insert_data)
+			if not ok then
+				report_ammo_copy_issue(entity, ammo_stack, "insert failed for " .. ammo_stack.name)
+			elseif inserted ~= ammo_stack.count then
+				report_ammo_copy_issue(entity, ammo_stack, "partial insert for " .. ammo_stack.name .. " (requested " .. ammo_stack.count .. ", inserted " .. inserted .. ")")
+			end
 		end
 	end
 
