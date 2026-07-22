@@ -8,6 +8,7 @@ if not heroturrets.events then heroturrets.events = {} end
 
 --[[names]]
 heroturrets.defines.names.mod_name = "HeroTurretsReduxFork"
+heroturrets.defines.names.mod_title = "HeroTurrets_Redux (Langmans Fork)"
 heroturrets.defines.names.mod_path = "__" .. heroturrets.defines.names.mod_name .. "__/"
 heroturrets.defines.names.force_player = "player"
 heroturrets.defines.names.force_enemy = "enemy"

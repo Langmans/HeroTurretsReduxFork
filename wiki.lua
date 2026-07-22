@@ -1,12 +1,13 @@
 ﻿if not heroturrets.defines then require ("prototypes.scripts.defines") end
 
 local mod_name = heroturrets.defines.names.mod_name
+local mod_title = heroturrets.defines.names.mod_title
 local mod_path = heroturrets.defines.names.mod_path
 
 heroturrets_wiki = 
 {
 	name = mod_name,
-	title    = "Hero Turrets Redux",		
+	title    = mod_title,		
 	mod_path = mod_path,		
 	{
 		name = {"gui.heroturrets-wiki-topic-main"},
