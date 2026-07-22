@@ -1,16 +1,4 @@
-﻿---------------------------------------------------------------------------------------------------
-Version: 2.0.1
-Date: 07/22/2026
-  Fixes:
-    - Added a fast-replace-first rank-up flow for Factorio 2.1, with safe fallback to destroy/create when replacement is not possible
-    - Improved replacement robustness with guarded create_entity/can_fast_replace handling to avoid script exceptions
-    - Preserved turret state more consistently across rank-up (ammo slot order, electric energy, and guarded fluid behavior in fallback path)
-  Compatibility:
-    - Improved behavior for modded turrets by using capability checks instead of only turret type assumptions
-  Internal:
-    - Refactored state capture/restore logic into a dedicated module (prototypes/scripts/turret_state_transfer.lua)
----------------------------------------------------------------------------------------------------
-Version: 2.0.0
+﻿Version: 2.0.0
 Date: 07/22/2026
   Breaking Changes:
     - Mod identity changed to HeroTurretsReduxFork (separate mod from HeroTurretRedux)
