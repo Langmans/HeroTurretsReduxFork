@@ -16,6 +16,7 @@ local get_entities_around  = heroturrets.util.entity.get_entities_around
 local parseCustomRankTable = heroturrets.util.parseCustomRankTable
 local local_split = heroturrets.util.local_split
 local local_trim = heroturrets.util.local_trim
+local turret_state_transfer = require("prototypes.scripts.turret_state_transfer")
 local find_recipes_for = function(name, force)
 	local p = prototypes.entity[name]
 	local ret = {}
@@ -43,22 +44,6 @@ local customKillsTable = settings.startup["heroturrets-csv-kill"].value
 local customDamageTable = settings.startup["heroturrets-csv-damage"].value
 
 local maxHealthOnRankUp = settings.startup["heroturrets-max-health-on-rank"].value
-
-local report_ammo_copy_issue = function(entity, ammo_stack, details)
-	log("HeroTurrets ammo transfer warning: " .. details)
-	if game == nil then return end
-	local msg = "[HeroTurretsReduxFork] Ammo transfer warning during rank-up on " .. (entity and entity.name or "unknown turret") .. ": " .. details
-	if storage ~= nil and storage.heroturrets ~= nil then
-		local state = storage.heroturrets
-		if state.ammo_copy_warn_tick == nil or (game.tick - state.ammo_copy_warn_tick) > 600 then
-			game.print(msg)
-			state.ammo_copy_warn_tick = game.tick
-		end
-		state.ammo_copy_warn_count = (state.ammo_copy_warn_count or 0) + 1
-	else
-		game.print(msg)
-	end
-end
 
 --- Build out priority target list for turrets that support it
 ---@param entity LuaEntity
@@ -135,7 +120,17 @@ local build_circuit_connections = function(new_entity,source_connections)
 	end
 end
 
+local try_create_entity = function(surface, params, context_label)
+	local ok, created = pcall(surface.create_entity, params)
+	if not ok then
+		log("HeroTurrets create_entity failed in " .. context_label)
+		return nil
+	end
+	return created
+end
 
+---@param entity LuaEntity
+---@return HeroFluidboxState|nil
 local local_replace_turret = function(entity,recipe)	
 	local s = entity.surface
 	local p = entity.position
@@ -196,36 +191,53 @@ local local_replace_turret = function(entity,recipe)
 	--Build out connections 
 	--TODO : Check for no connections...
 	local source_connections = get_circuit_connections(entity)
+	local preserved_state = turret_state_transfer.capture(entity)
 
-	local fluid = {}
-	if entity.fluidbox ~= nil then 
-	  for k = 1, #entity.fluidbox do local fb = entity.fluidbox[k]
-		if fb ~=nil and fb.name ~= nil then
-			table.insert(fluid,fb)
-		end
-	  end
+	-- Factorio 2.1: prefer engine-managed replacement to preserve networked state.
+	local can_use_fast_replace = false
+	local ok_can_fast_replace, can_fast_replace_result = pcall(function()
+		return s.can_fast_replace{
+			name = recipe.name,
+			position = p,
+			direction = d,
+			force = f
+		}
+	end)
+	if ok_can_fast_replace and can_fast_replace_result == true then
+		can_use_fast_replace = true
 	end
-	local i = entity.get_inventory(defines.inventory.turret_ammo)
-	local ammo_stacks = nil
-	if i ~= nil then 
-		ammo_stacks = {}
-		for slot_index = 1, #i do
-			local stack = i[slot_index]
-			if stack ~= nil and stack.valid_for_read then
-				table.insert(ammo_stacks, {
-					name = stack.name,
-					count = stack.count,
-					quality = stack.quality,
-					ammo = stack.ammo,
-					health = stack.health
-				})
-			end
-		end
+
+	local new_entity = nil
+	if can_use_fast_replace then
+		new_entity = try_create_entity(s, {
+			name = recipe.name,
+			position = p,
+			force = f,
+			direction = d,
+			orientation = o,
+			raise_built = true,
+			quality = q,
+			ignore_unprioritised_targets = ignore_Unprioritised_targets,
+			fast_replace = true,
+			spill = false
+		}, "fast_replace")
 	end
-	if  entity.can_be_destroyed() ~= true or 
-		entity.destroy({raise_destroy = true}) ~= true then return end
-	
-	local new_entity = s.create_entity{name=recipe.name, position=p, force = f, direction = d, orientation = o, raise_built = true,quality = q,ignore_unprioritised_targets = ignore_Unprioritised_targets}
+
+	local used_fast_replace = new_entity ~= nil
+	if not used_fast_replace then
+		if entity.can_be_destroyed() ~= true or entity.destroy({raise_destroy = true}) ~= true then return end
+		new_entity = try_create_entity(s, {
+			name = recipe.name,
+			position = p,
+			force = f,
+			direction = d,
+			orientation = o,
+			raise_built = true,
+			quality = q,
+			ignore_unprioritised_targets = ignore_Unprioritised_targets
+		}, "fallback_create")
+	end
+
 	if new_entity == nil then return end -- error shouldn't happen
 
 	if not maxHealthOnRankUp then 
@@ -234,32 +246,13 @@ local local_replace_turret = function(entity,recipe)
 
 	new_entity.kills = k
 	new_entity.damage_dealt = dd
-
-	local inv = new_entity.get_inventory(defines.inventory.turret_ammo)
-	if inv ~= nil and ammo_stacks ~= nil then
-		for _, ammo_stack in ipairs(ammo_stacks) do
-			local insert_data = {
-				name = ammo_stack.name,
-				count = ammo_stack.count,
-				quality = ammo_stack.quality,
-				ammo = ammo_stack.ammo,
-				health = ammo_stack.health
-			}
-			local ok, inserted = pcall(inv.insert, insert_data)
-			if not ok then
-				report_ammo_copy_issue(entity, ammo_stack, "insert failed for " .. ammo_stack.name)
-			elseif inserted ~= ammo_stack.count then
-				report_ammo_copy_issue(entity, ammo_stack, "partial insert for " .. ammo_stack.name .. " (requested " .. ammo_stack.count .. ", inserted " .. inserted .. ")")
-			end
-		end
+	if used_fast_replace then
+		-- Let engine replacement handle ammo/fluid continuity, avoid duplicate restores.
+		turret_state_transfer.restore(entity, new_entity, preserved_state, {ammo = false, fluidbox = false, energy = true})
+	else
+		turret_state_transfer.restore(entity, new_entity, preserved_state)
 	end
 
-	if fluid ~=nil then
-		for k = 1, #fluid do local fb = fluid[k]
-			--Commenting out for now until I can get a fix for the whole fluid network being drained
-			--new_entity.fluidbox[k] = fb
-		end
-	end
 	--build out the target priority list in the new turret entity
 	if targets_Table ~= nil then
 		for index, priority_target in pairs(targets_Table) do
