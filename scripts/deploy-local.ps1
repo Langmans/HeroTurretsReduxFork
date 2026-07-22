@@ -17,9 +17,10 @@ if (-not (Test-Path $TargetDir)) {
 $info = Get-Content $infoPath -Raw | ConvertFrom-Json
 $zipName = '{0}_{1}.zip' -f $info.name, $info.version
 $zipPath = Join-Path $TargetDir $zipName
+ $archiveRootName = '{0}_{1}' -f $info.name, $info.version
 
 $tempRoot = Join-Path $env:TEMP ('factorio-pack-' + [guid]::NewGuid().ToString())
-$stageDir = Join-Path $tempRoot $info.name
+$stageDir = Join-Path $tempRoot $archiveRootName
 
 try {
     New-Item -ItemType Directory -Path $stageDir -Force | Out-Null
@@ -34,7 +35,7 @@ try {
         Remove-Item $zipPath -Force
     }
 
-    Compress-Archive -Path (Join-Path $stageDir '*') -DestinationPath $zipPath -CompressionLevel Optimal
+    Compress-Archive -Path $stageDir -DestinationPath $zipPath -CompressionLevel Optimal
     Write-Output "Deployed: $zipPath"
 }
 finally {
