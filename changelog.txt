@@ -5,8 +5,14 @@ Date: 07/22/2026
   Compatibility:
     - Updated mod metadata for Factorio 2.1
     - Added configuration-change detection for HeroTurret, HeroTurretRedux, and HeroTurretsReduxFork names
+    - Added fast-replace-first turret rank-up flow for Factorio 2.1, with safe fallback when replacement is not possible
+    - Improved modded turret handling by using capability checks for ammo/fluid/energy transfer behavior
   Fixes:
     - Hardened configuration-change version detection to avoid nil access during upgrade edge cases
+    - Hardened create_entity/can_fast_replace calls with guarded handling to avoid runtime exceptions in upgrade flow
+    - Improved turret rank-up state continuity (ammo slot order, energy restore, and guarded fallback fluid restore)
+  Internal:
+    - Refactored turret state capture/restore logic into a dedicated module
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.38
 Date: 03/11/2026
