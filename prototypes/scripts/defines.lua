@@ -7,6 +7,8 @@ if not heroturrets.defines.defaults then heroturrets.defines.defaults = {} end
 if not heroturrets.events then heroturrets.events = {} end
 
 --[[names]]
+heroturrets.defines.names.mod_name = "HeroTurretsReduxFork"
+heroturrets.defines.names.mod_path = "__" .. heroturrets.defines.names.mod_name .. "__/"
 heroturrets.defines.names.force_player = "player"
 heroturrets.defines.names.force_enemy = "enemy"
 heroturrets.defines.names.force_neutral = "neutral"

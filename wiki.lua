@@ -1,10 +1,13 @@
 ﻿if not heroturrets.defines then require ("prototypes.scripts.defines") end
 
+local mod_name = heroturrets.defines.names.mod_name
+local mod_path = heroturrets.defines.names.mod_path
+
 heroturrets_wiki = 
 {
-	name = "HeroTurretRedux",
+	name = mod_name,
 	title    = "Hero Turrets Redux",		
-	mod_path =  "__heroturretredux__",		
+	mod_path = mod_path,		
 	{
 		name = {"gui.heroturrets-wiki-topic-main"},
 		topic = {
@@ -13,7 +16,7 @@ heroturrets_wiki =
 			{				
 				type = "image", 
 				name = "ht-topic-main-img-1",
-				filepath = "__heroturrets__/thumbnail.png",
+				filepath = mod_path .. "thumbnail.png",
 				width = 144,
 				height = 144,
 				scale = 1
@@ -31,7 +34,7 @@ heroturrets_wiki =
 			{				
 				type = "image", 
 				name = "ht-1-img",
-				filepath = "__heroturrets__/graphics/entity/turret/hr-hero-1-base.png",
+				filepath = mod_path .. "graphics/entity/turret/hr-hero-1-base.png",
 				width = 46,
 				height = 48,
 				scale = 1
@@ -47,7 +50,7 @@ heroturrets_wiki =
 			{				
 				type = "image", 
 				name = "ht-2-img",
-				filepath = "__heroturrets__/graphics/entity/turret/hr-hero-2-base.png",
+				filepath = mod_path .. "graphics/entity/turret/hr-hero-2-base.png",
 				width = 46,
 				height = 48,
 				scale = 1
@@ -63,7 +66,7 @@ heroturrets_wiki =
 			{				
 				type = "image", 
 				name = "ht-3-img",
-				filepath = "__heroturrets__/graphics/entity/turret/hr-hero-3-base.png",
+				filepath = mod_path .. "graphics/entity/turret/hr-hero-3-base.png",
 				width = 46,
 				height = 48,
 				scale = 1
@@ -79,7 +82,7 @@ heroturrets_wiki =
 			{				
 				type = "image", 
 				name = "ht-4-img",
-				filepath = "__heroturrets__/graphics/entity/turret/hr-hero-4-base.png",
+				filepath = mod_path .. "graphics/entity/turret/hr-hero-4-base.png",
 				width = 46,
 				height = 48,
 				scale = 1

@@ -17,6 +17,7 @@ local recipes_of = heroturrets.util.recipe.find_recipes_for
 local parseCustomRankTable = heroturrets.util.parseCustomRankTable
 local local_split = heroturrets.util.local_split
 local local_trim = heroturrets.util.local_trim
+local mod_path = heroturrets.defines.names.mod_path
 
 local tech = data.raw["technology"]
 --over all buff
@@ -159,7 +160,7 @@ local get_badge = function(rank,top,left,rc,layer) --added
         rank = rank - 4
     end
     local img = {
-                    filename = "__HeroTurretRedux__/graphics/entity/turret/hero-"..rank.."-base.png",
+                    filename = mod_path .. "graphics/entity/turret/hero-"..rank.."-base.png",
                     priority = "high",
                     width = 23,
                     height = 24,
@@ -170,7 +171,7 @@ local get_badge = function(rank,top,left,rc,layer) --added
                     tint = tint,
                     hr_version =
                     {
-                        filename = "__HeroTurretRedux__/graphics/entity/turret/hr-hero-"..rank.."-base.png",
+                        filename = mod_path .. "graphics/entity/turret/hr-hero-"..rank.."-base.png",
                         priority = "high",
                         line_length = 1,
                         width = 46,
@@ -195,7 +196,7 @@ local get_rampant_badge = function(rank,top,left,rc,dc)
         rank = rank - 4
     end
     local img = {
-                    filename = "__HeroTurretRedux__/graphics/entity/turret/hero-"..rank.."-base.png",
+                    filename = mod_path .. "graphics/entity/turret/hero-"..rank.."-base.png",
                     priority = "high",
                     width = 23,
                     height = 24,
@@ -206,7 +207,7 @@ local get_rampant_badge = function(rank,top,left,rc,dc)
                     tint = tint,
                     hr_version =
                     {
-                        filename = "__HeroTurretRedux__/graphics/entity/turret/hr-hero-"..rank.."-base.png",
+                        filename = mod_path .. "graphics/entity/turret/hr-hero-"..rank.."-base.png",
                         priority = "high",
                         line_length = 1,
                         width = 46,
@@ -606,7 +607,7 @@ local local_create_turret = function(turret,rank,rank_string,mod,custom_buff_mod
         local base_icon = 
 		{   
            {
-            icon = "__HeroTurretRedux__/graphics/icons/hero-"..ir.."-icon.png",
+	            icon = mod_path .. "graphics/icons/hero-"..ir.."-icon.png",
 			icon_size = 64,
             icon_mipmaps = 4,
             tint = tint
