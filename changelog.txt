@@ -1,4 +1,14 @@
 ﻿---------------------------------------------------------------------------------------------------
+Version: 2.0.0
+Date: 07/22/2026
+  Breaking Changes:
+    - Mod identity changed to HeroTurretsReduxFork (separate mod from HeroTurretRedux)
+  Compatibility:
+    - Updated mod metadata for Factorio 2.1
+    - Added configuration-change detection for HeroTurret, HeroTurretRedux, and HeroTurretsReduxFork names
+  Fixes:
+    - Hardened configuration-change version detection to avoid nil access during upgrade edge cases
+---------------------------------------------------------------------------------------------------
 Version: 1.0.38
 Date: 03/11/2026
   Fixes:

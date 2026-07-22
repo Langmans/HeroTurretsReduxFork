@@ -1,14 +1,14 @@
 {
-  "name": "HeroTurretRedux",
-  "version": "1.0.38",
+  "name": "HeroTurretsReduxFork",
+  "version": "2.0.0",
   "title": "HeroTurrets_Redux",
-  "author": "ForTheKing55",
+  "author": "langmans",
   "contact": "",
-  "homepage": "https://www.patreon.com/user?u=15367757",
-  "factorio_version": "2.0",
+  "homepage": "https://github.com/langmans/HeroTurretsReduxFork",
+  "factorio_version": "2.1",
   "description": "Turrets are built using salvaged self-learning AI tech from your ship allowing them to get deadlier with practice.  Extends turrets via ranking system based on kills. Turrets generated so not limited to vanilla, identifiable by overlaid rank insignia. Rank buffs individual turrets.",
   "dependencies": [
-    "base >= 2.0",
+    "base >= 2.1",
     "? Yuoki >= 1.2.0"
   ]
 }

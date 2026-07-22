@@ -338,21 +338,36 @@ script.on_load(function()
 
 script.on_configuration_changed(function(f) 
 
-	
-	if f.mod_changes["HeroTurret"] == nil or f.mod_changes["HeroTurretRedux"].old_version == nil then
+	local supported_mod_names = {"HeroTurretsReduxFork", "HeroTurretRedux", "HeroTurret"}
+	local active_mod_name = nil
+	for i = 1, #supported_mod_names do
+		local name = supported_mod_names[i]
+		if script.active_mods[name] ~= nil then
+			active_mod_name = name
+			break
+		end
+	end
+
+	if active_mod_name == nil then
+		return
+	end
+
+	local redux_change = f.mod_changes[active_mod_name]
+	if f.mod_changes["HeroTurret"] == nil or redux_change == nil or redux_change.old_version == nil then
 		if heroturrets.force_configuration_change == true then
-			log("Forcing update to " .. script.active_mods["HeroTurretRedux"])
-			f.mod_changes["HeroTurretRedux"] = 
+			log("Forcing update to " .. script.active_mods[active_mod_name])
+			f.mod_changes[active_mod_name] = 
 			{
-				new_version = script.active_mods["HeroTurretRedux"],
+				new_version = script.active_mods[active_mod_name],
 				old_version = "0.1.1"
 			} 
+			redux_change = f.mod_changes[active_mod_name]
 		else
 			return
 		end
 	end
 
-	log("control.on_configuration_changed " .. f.mod_changes["HeroTurretRedux"].old_version .. " -> " .. f.mod_changes["HeroTurretRedux"].new_version)
+	log("control.on_configuration_changed [" .. active_mod_name .. "] " .. redux_change.old_version .. " -> " .. redux_change.new_version)
 
 	for k=1, #heroturrets.on_configuration_changed do local v = heroturrets.on_configuration_changed[k]		
 		v(f)
