@@ -81,6 +81,35 @@
 		order = "d"
 	},
 	{
+		type = "bool-setting",
+		name = "heroturrets-announce-rank-up",
+		setting_type = "runtime-per-user",
+		default_value = true,
+		order = "d1"
+	},
+	{
+		type = "string-setting",
+		name = "heroturrets-announce-rank-up-mode",
+		setting_type = "runtime-per-user",
+		default_value = "local",
+		allowed_values = {"global", "local"},
+		order = "d2"
+	},
+	{
+		type = "bool-setting",
+		name = "heroturrets-announce-rank-up-sound",
+		setting_type = "runtime-per-user",
+		default_value = true,
+		order = "d3"
+	},
+	{
+		type = "bool-setting",
+		name = "heroturrets-announce-rank-up-flash",
+		setting_type = "runtime-per-user",
+		default_value = true,
+		order = "d4"
+	},
+	{
 		type = "string-setting",
 		name = "heroturrets-kill-counter",
 		setting_type = "startup",

@@ -1,4 +1,14 @@
-﻿Version: 2.0.0
+﻿---------------------------------------------------------------------------------------------------
+Version: 2.1.0
+Date: 07/25/2026
+  Features:
+    - Added turret rank-up notifications: optional global alert or local sound, with per-player settings for enabling, mode, sound, and visual flash (enabled by default, defaulting to local mode with sound), with the mode/sound/flash settings indented in the mod settings menu to show they depend on the main toggle
+    - Added an original rank-up fanfare sound, inspired by the Red Alert 2 promotion jingle but generated from scratch via MIDI (General MIDI trumpet) rather than using any game audio, so it ships free of third-party assets
+    - Added an animated rank-up flash effect: the turret's new rank pulses in below it while the turret sprite blinks with a soft light, both gradually fading out over 5 seconds; tracked per turret and per player so a rapid re-promotion resets the effect instead of stacking duplicates
+  Internal:
+    - Added scripts/generate-rankup-sound.py and scripts/compare-rankup-sound.py for regenerating and tuning the rank-up sound
+---------------------------------------------------------------------------------------------------
+Version: 2.0.0
 Date: 07/22/2026
   Breaking Changes:
     - Mod identity changed to HeroTurretsReduxFork (separate mod from HeroTurretRedux)

@@ -120,6 +120,139 @@ local build_circuit_connections = function(new_entity,source_connections)
 	end
 end
 
+local get_rank_up_notification_settings = function(player)
+	local player_settings = settings.get_player_settings(player.index)
+	if player_settings == nil then
+		return false, "local", false, true
+	end
+
+	local enabled_setting = player_settings["heroturrets-announce-rank-up"]
+	local mode_setting = player_settings["heroturrets-announce-rank-up-mode"]
+	local sound_setting = player_settings["heroturrets-announce-rank-up-sound"]
+	local flash_setting = player_settings["heroturrets-announce-rank-up-flash"]
+
+	local enabled = not not (enabled_setting and enabled_setting.value)
+	local mode = mode_setting and mode_setting.value or "global"
+	local play_sound = not not (sound_setting and sound_setting.value)
+	local show_flash = not not (flash_setting and flash_setting.value)
+
+	return enabled, mode, play_sound, show_flash
+end
+
+local RANK_UP_FX_DURATION_TICKS = 300 -- 5 seconds
+local RANK_UP_FX_LIGHT_OMEGA = 0.13 -- light blinks a few times per second
+local RANK_UP_FX_TEXT_OMEGA = 0.02 -- calm, slow breathing scale on the text
+
+local spawn_rank_up_fx = function(entity, player, new_turret_name)
+	if storage.heroturrets.rank_up_fx == nil then storage.heroturrets.rank_up_fx = {} end
+	local fx_list = storage.heroturrets.rank_up_fx
+
+	-- reset (rather than stack) if this same turret+player already has an effect running,
+	-- e.g. a rapid re-promotion within the fx duration
+	for i = #fx_list, 1, -1 do
+		local existing = fx_list[i]
+		if existing.unit_number == entity.unit_number and existing.player_index == player.index then
+			if existing.text.valid then existing.text.destroy() end
+			if existing.light.valid then existing.light.destroy() end
+			table.remove(fx_list, i)
+		end
+	end
+
+	local bb = entity.bounding_box
+	local below_offset = (bb.right_bottom.y - entity.position.y) + 0.4
+
+	local text_obj = rendering.draw_text({
+		text = new_turret_name,
+		surface = entity.surface,
+		target = {entity = entity, offset = {0, below_offset}},
+		color = {r = 1, g = 0.95, b = 0.2, a = 1},
+		scale = 1.4,
+		alignment = "center",
+		players = {player},
+		time_to_live = RANK_UP_FX_DURATION_TICKS
+	})
+
+	local light_obj = rendering.draw_light({
+		sprite = "utility/light_medium",
+		target = entity,
+		surface = entity.surface,
+		intensity = 0,
+		scale = 4,
+		color = {r = 1, g = 1, b = 0.85},
+		players = {player},
+		time_to_live = RANK_UP_FX_DURATION_TICKS
+	})
+
+	table.insert(fx_list, {
+		unit_number = entity.unit_number,
+		player_index = player.index,
+		text = text_obj,
+		light = light_obj,
+		start_tick = game.tick,
+		end_tick = game.tick + RANK_UP_FX_DURATION_TICKS
+	})
+end
+
+local update_rank_up_fx = function()
+	local fx_list = storage.heroturrets.rank_up_fx
+	if fx_list == nil or #fx_list == 0 then return end
+
+	local tick = game.tick
+	for i = #fx_list, 1, -1 do
+		local fx = fx_list[i]
+		if tick >= fx.end_tick or not (fx.text.valid and fx.light.valid) then
+			if fx.text.valid then fx.text.destroy() end
+			if fx.light.valid then fx.light.destroy() end
+			table.remove(fx_list, i)
+		else
+			local elapsed = tick - fx.start_tick
+			local duration = fx.end_tick - fx.start_tick
+			local progress = elapsed / duration
+			-- overall strength tapers off continuously the longer the effect runs
+			local decay = (1 - progress) ^ 1.5
+
+			local light_pulse = math.abs(math.sin(elapsed * RANK_UP_FX_LIGHT_OMEGA))
+			local text_pulse = math.abs(math.sin(elapsed * RANK_UP_FX_TEXT_OMEGA))
+
+			fx.text.scale = 1.2 + 0.08 * text_pulse
+			fx.text.color = {r = 1, g = 0.95, b = 0.2, a = decay}
+			fx.light.intensity = 0.35 * light_pulse * decay
+		end
+	end
+end
+
+local notify_rank_up = function(entity, old_turret_name, new_turret_name)
+	local rank_up_message = {"gui.heroturrets-rank-up-alert", old_turret_name, new_turret_name}
+	local notification_sound = {path = "heroturrets-rank-up-sound"}
+
+	for _, player in pairs(entity.force.players) do
+		if player ~= nil and player.valid then
+			local enabled, mode, play_sound, show_flash = get_rank_up_notification_settings(player)
+            if enabled then
+				if show_flash then
+					spawn_rank_up_fx(entity, player, new_turret_name)
+				end
+                if mode == "local" then
+					if play_sound then
+                        player.play_sound({
+                            path = notification_sound.path,
+                            position = entity.position,
+						})
+					end
+				else
+                    player.add_custom_alert(entity, {
+                        type = "entity",
+                        name = entity.name,
+					}, rank_up_message, true)
+					if play_sound then
+						player.play_sound(notification_sound)
+					end
+				end
+			end
+		end
+	end
+end
+
 local try_create_entity = function(surface, params, context_label)
 	local ok, created = pcall(surface.create_entity, params)
 	if not ok then
@@ -142,6 +275,7 @@ local local_replace_turret = function(entity,recipe)
 	local d = entity.direction
 	local o = entity.orientation
 	local q = entity.quality
+	local old_turret_name = entity.localised_name or entity.name
 
 	--- Get priority targeting information
 	
@@ -287,6 +421,9 @@ local local_replace_turret = function(entity,recipe)
 		end
 
 	end
+
+	local new_turret_name = new_entity.localised_name or new_entity.name
+	notify_rank_up(new_entity, old_turret_name, new_turret_name)
 
 end
 
@@ -678,7 +815,8 @@ local local_on_post_entity_died = function(event)
 local control = {
 	on_removed = local_turret_removed,
 	on_added = local_turret_added,
-	on_post_entity_died = local_on_post_entity_died
+	on_post_entity_died = local_on_post_entity_died,
+	on_tick = update_rank_up_fx
 }
 
 heroturrets.register_script(control)
