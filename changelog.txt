@@ -1,4 +1,9 @@
 ﻿---------------------------------------------------------------------------------------------------
+Version: 2.3.0
+Date: 07/25/2026
+  Locale:
+    - Added full German, French, and Dutch translations for mod settings, the rank-up alert, the Informatron wiki pages, mod name/description, and the attack-bonus modifier descriptions (previously empty, falling back to English)
+---------------------------------------------------------------------------------------------------
 Version: 2.2.0
 Date: 07/25/2026
   Features:
