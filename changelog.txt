@@ -1,7 +1,12 @@
 ﻿---------------------------------------------------------------------------------------------------
+Version: 2.1.2
+Date: 07/25/2026
+  Changes:
+    - Normalized changelog.txt category names to Factorio's officially recognized set (Fixes -> Bugfixes, Internal/Breaking Changes -> Changes), merging any resulting duplicate category within a version
+---------------------------------------------------------------------------------------------------
 Version: 2.1.1
 Date: 07/25/2026
-  Fixes:
+  Bugfixes:
     - Fixed .gitattributes export-ignore pattern for "scripts" matching at any depth, which stripped prototypes/scripts (including types.lua) from git-archive based publish packaging and broke mod loading via a require failure in data-final-fixes.lua
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.0
@@ -10,45 +15,44 @@ Date: 07/25/2026
     - Added turret rank-up notifications: optional global alert or local sound, with per-player settings for enabling, mode, sound, and visual flash (enabled by default, defaulting to local mode with sound), with the mode/sound/flash settings indented in the mod settings menu to show they depend on the main toggle
     - Added an original rank-up fanfare sound, inspired by the Red Alert 2 promotion jingle but generated from scratch via MIDI (General MIDI trumpet) rather than using any game audio, so it ships free of third-party assets
     - Added an animated rank-up flash effect: the turret's new rank pulses in below it while the turret sprite blinks with a soft light, both gradually fading out over 5 seconds; tracked per turret and per player so a rapid re-promotion resets the effect instead of stacking duplicates
-  Internal:
+  Changes:
     - Added scripts/generate-rankup-sound.py and scripts/compare-rankup-sound.py for regenerating and tuning the rank-up sound
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.0
 Date: 07/22/2026
-  Breaking Changes:
+  Changes:
     - Mod identity changed to HeroTurretsReduxFork (separate mod from HeroTurretRedux)
+    - Refactored turret state capture/restore logic into a dedicated module
   Compatibility:
     - Updated mod metadata for Factorio 2.1
     - Added configuration-change detection for HeroTurret, HeroTurretRedux, and HeroTurretsReduxFork names
     - Added fast-replace-first turret rank-up flow for Factorio 2.1, with safe fallback when replacement is not possible
     - Improved modded turret handling by using capability checks for ammo/fluid/energy transfer behavior
     - Ensured ranked turret prototypes consistently set fast_replaceable_group so fast_replace can apply reliably
-  Fixes:
+  Bugfixes:
     - Hardened configuration-change version detection to avoid nil access during upgrade edge cases
     - Hardened create_entity/can_fast_replace calls with guarded handling to avoid runtime exceptions in upgrade flow
     - Improved turret rank-up state continuity (ammo slot order, energy restore, and guarded fallback fluid restore)
     - Excluded .tmp and other dot-directories from local deploy packaging and git-archive based publish packaging
-  Internal:
-    - Refactored turret state capture/restore logic into a dedicated module
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.38
 Date: 03/11/2026
-  Fixes:
+  Bugfixes:
     - Fixed bug with prio targets 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.37
 Date: 03/07/2026
-  Fixes:
+  Bugfixes:
     - made ammo range changes an experimental setting, Set to false by default.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.36
 Date: 03/07/2026
-  Fixes:
+  Bugfixes:
     - added artillery turret ammo to use max range
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.35
 Date: 03/05/2026
-  Fixes:
+  Bugfixes:
     - fixed bug with priorities for ghosts not sticking if they were from a ranked turret
     - tweaked the energy capacity of energy based weapons to accomadate their shooting speed
     - Added turrets max range to ammo that uses range 
@@ -56,12 +60,12 @@ Date: 03/05/2026
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.34
 Date: 02/17/2026
-  Fixes:
+  Bugfixes:
     - bug fixes.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.33
 Date: 02/17/2026
-  Fixes:
+  Bugfixes:
     - various bug fixes.
   Features:
     - setting to remove turret ranks from ghost view
@@ -69,7 +73,7 @@ Date: 02/17/2026
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.32
 Date: 12/22/2025
-  Fixes:
+  Bugfixes:
     - fixed an issue with turrets having multiple base visualtion layers causing a crash 
     - fixed an issue with fluid turrets on rank up using up all the oil on their fluid network
 ---------------------------------------------------------------------------------------------------
@@ -80,30 +84,30 @@ Date: 07/06/2025
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.29
 Date: 07/06/2025
-  Fixes:
+  Bugfixes:
     - added compatability with Bigger Artillery mod
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.28
 Date: 07/03/2025
-  Fixes:
+  Bugfixes:
     - added an additional check in the entity validation check for some edge cases
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.27
 Date: 07/02/2025
-  Fixes:
+  Bugfixes:
     - added a normalization for selection boxes for compatibility with Kuxynator mods (Thanks Kuxynator!)
     - added Water turrets to the ignore list of turrets 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.26
 Date: 05/27/2025
-  Fixes:
+  Bugfixes:
     - Removed turret recipes from factoriopedia to clean it up. They couldn't be crafted anyway (Thanks Hoochie)
     - Made the custom ranks default to six instead of 10 (thanks Dune 1411 for the suggestion)
     - Removed Space Age rail gun range modifier as once it was past the projectile range, the turret would waste ammo.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.25
 Date: 05/10/2025
-  Fixes:
+  Bugfixes:
     - Fixed issue with the main is_valid check failing if the entity wasn't valid
   Features:
     - added a setting to set the newly ranked turrets health to max instead of using the previous health amount
@@ -188,23 +192,23 @@ Version: 1.0.12
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.11
-  Fixes:
+  Bugfixes:
     - Fixed an issue with control behavior settings not checking if the entity was valid
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.10
-  Fixes:
+  Bugfixes:
     - Fixed an issue with the entity not being valid before building out the priority targeting settings
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.9
-  Fixes:
+  Bugfixes:
     - Fixed an issue where the priority targeting settings were not being copied over to the newly leveled turret
     - also fixed a related issue with circuit settings not copying over. Found an issue with circuit connections not copying over but have not found a good solution just yet.
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.8
-  Fixes:
+  Bugfixes:
     - added a nil check for entity.maxhealth for turrets like laser walls
 
 ---------------------------------------------------------------------------------------------------
@@ -216,13 +220,13 @@ Version: 1.0.7
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.5
-  Fixes:
+  Bugfixes:
     - Fixed an issue with Concentrated solar mod not working correctly. Just disabled for this mod for now
     - Fixed an issue with a nil value found for some modded turrets
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.2
-  Fixes:
+  Bugfixes:
     - Fixed path in info.json
 
 ---------------------------------------------------------------------------------------------------
