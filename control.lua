@@ -646,3 +646,78 @@ script.on_event(defines.events.on_entity_cloned,local_on_entity_cloned)
 script.on_event(defines.events.on_player_setup_blueprint, local_on_player_setup_blueprint)
 
 -- FIX LATER script.on_event(defines.events.on_gui_click, landmine_on_gui_click)
+
+--[[Informatron in-game wiki pages. Harmless to register even if Informatron isn't installed --
+	nothing calls into this interface unless Informatron itself does.]]
+local heroturrets_informatron_menu = function(player_index)
+	return {
+		ranks = 1,
+		bonuses = 1,
+		rankup = 1,
+		pickup = 1,
+		compatibility = 1,
+	}
+	end
+
+local heroturrets_informatron_add_heading = function(element, name, caption)
+	element.add{type = "label", name = name, caption = caption, style = "heading_1_label"}
+	end
+
+local heroturrets_informatron_add_text = function(element, name, caption)
+	element.add{type = "label", name = name, caption = caption}
+	end
+
+local heroturrets_informatron_page_content = function(page_name, player_index, element)
+	if page_name == "heroturrets" then
+		heroturrets_informatron_add_text(element, "text_1", {"heroturrets.page_heroturrets_text_1"})
+		heroturrets_informatron_add_text(element, "text_2", {"heroturrets.page_heroturrets_text_2"})
+
+	elseif page_name == "ranks" then
+		heroturrets_informatron_add_text(element, "text_1", {"heroturrets.page_ranks_text_1"})
+
+		local icon_row = element.add{type = "flow", name = "icon_row", direction = "horizontal"}
+		icon_row.style.horizontal_spacing = 8
+		icon_row.style.top_margin = 8
+		icon_row.style.bottom_margin = 8
+		for i = 1, 6 do
+			local style_name = "heroturrets_rank_icon_" .. i
+			-- pcall guards against the style not existing (e.g. an older Informatron version)
+			pcall(function() icon_row.add{type = "button", name = "rank_icon_" .. i, style = style_name} end)
+		end
+
+		heroturrets_informatron_add_text(element, "text_2", {"heroturrets.page_ranks_text_2"})
+		heroturrets_informatron_add_text(element, "text_3", {"heroturrets.page_ranks_text_3"})
+
+	elseif page_name == "bonuses" then
+		heroturrets_informatron_add_text(element, "text_1", {"heroturrets.page_bonuses_text_1"})
+		heroturrets_informatron_add_text(element, "text_2", {"heroturrets.page_bonuses_text_2"})
+
+	elseif page_name == "rankup" then
+		heroturrets_informatron_add_text(element, "text_1", {"heroturrets.page_rankup_text_1"})
+		heroturrets_informatron_add_text(element, "text_2", {"heroturrets.page_rankup_text_2"})
+
+	elseif page_name == "pickup" then
+		heroturrets_informatron_add_text(element, "text_1", {"heroturrets.page_pickup_text_1"})
+		heroturrets_informatron_add_heading(element, "text_2_h", {"heroturrets.page_pickup_text_2_heading"})
+		heroturrets_informatron_add_text(element, "text_2", {"heroturrets.page_pickup_text_2"})
+		heroturrets_informatron_add_heading(element, "text_3_h", {"heroturrets.page_pickup_text_3_heading"})
+		heroturrets_informatron_add_text(element, "text_3", {"heroturrets.page_pickup_text_3"})
+		heroturrets_informatron_add_heading(element, "text_4_h", {"heroturrets.page_pickup_text_4_heading"})
+		heroturrets_informatron_add_text(element, "text_4", {"heroturrets.page_pickup_text_4"})
+		heroturrets_informatron_add_heading(element, "text_5_h", {"heroturrets.page_pickup_text_5_heading"})
+		heroturrets_informatron_add_text(element, "text_5", {"heroturrets.page_pickup_text_5"})
+
+	elseif page_name == "compatibility" then
+		heroturrets_informatron_add_text(element, "text_1", {"heroturrets.page_compatibility_text_1"})
+		heroturrets_informatron_add_text(element, "text_2", {"heroturrets.page_compatibility_text_2"})
+	end
+	end
+
+remote.add_interface("heroturrets", {
+	informatron_menu = function(data)
+		return heroturrets_informatron_menu(data.player_index)
+	end,
+	informatron_page_content = function(data)
+		return heroturrets_informatron_page_content(data.page_name, data.player_index, data.element)
+	end,
+})

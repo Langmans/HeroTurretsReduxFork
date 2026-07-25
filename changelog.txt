@@ -1,4 +1,11 @@
 ﻿---------------------------------------------------------------------------------------------------
+Version: 2.2.0
+Date: 07/25/2026
+  Features:
+    - Added in-game wiki pages for the Informatron mod (optional dependency): Ranks & Promotion, Rank Bonuses, Ranking Up, Picking Up Ranked Turrets, and Turret & Mod Compatibility, including a row of rank badge icons on the Ranks page
+  Changes:
+    - Filled in readme.md with a full player-facing description of ranking, rank bonuses, the rank-up moment, pickup/ghost/blueprint behavior, turret and mod compatibility, and mod lineage credits
+---------------------------------------------------------------------------------------------------
 Version: 2.1.2
 Date: 07/25/2026
   Changes:
