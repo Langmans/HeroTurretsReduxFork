@@ -76,6 +76,12 @@ Yuoki Turrets is listed as an optional mod, with a compatibility fix dating back
 
 If you have the [Informatron](https://mods.factorio.com/mod/informatron) mod installed, this mod adds its own set of help pages to it — covering ranks & promotion, rank bonuses, what happens on rank-up, how picking up ranked turrets works, and turret/mod compatibility. Informatron is entirely optional; without it, nothing changes.
 
+## Translations
+
+Fully translated: **English**, **German**, **French**, **Dutch** — mod settings, the rank-up alert, the Informatron wiki pages, the mod name/description, and the attack-bonus modifier text. Other languages currently fall back to English.
+
+One thing translation can't reach: the default rank names themselves ("Private 1st Class", "Corporal", etc.) are generated as plain text in Lua, not through the locale system, so they always display in English (or whatever you set via the "Custom Ranks" setting) regardless of game language.
+
 ## Credits
 
 - Original mod: [HeroTurrets](https://mods.factorio.com/mod/heroturrets) by btarrant
